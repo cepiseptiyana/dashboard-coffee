@@ -3,11 +3,15 @@ import {
   DashboardOutlined,
   ShoppingCartOutlined,
   TeamOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Button, Tooltip, Modal } from "antd";
 import { useRouter } from "next/router";
+
+import { ROUTES } from "@/routes/route";
 import { MAIN_MENU } from "@/constants/menu";
 import { COFFEE_COLORS } from "@/constants/theme";
+import { removeToken } from "@/utils/auth";
 
 const { Sider } = Layout;
 
@@ -24,12 +28,32 @@ interface SidebarProps {
 
 export default function Sidebar({ collapsed }: SidebarProps) {
   const router = useRouter();
+  const MainMenuItems = [];
 
-  const items = MAIN_MENU.map((item) => ({
-    key: item.key,
-    icon: ICON_MAP[item.icon],
-    label: item.label,
-  }));
+  for (const menu of MAIN_MENU) {
+    MainMenuItems.push({
+      key: menu.key,
+      icon: ICON_MAP[menu.icon],
+      label: menu.label,
+    });
+  }
+
+  function logoutUser() {
+    Modal.confirm({
+      title: "Apakah Anda yakin?",
+      content: "Tindakan ini tidak dapat dibatalkan.",
+      okText: "Ya",
+      cancelText: "Batal",
+      onOk() {
+        console.log("User klik Ya");
+        removeToken();
+        router.push(ROUTES.LOGIN);
+      },
+      onCancel() {
+        console.log("User klik Batal");
+      },
+    });
+  }
 
   return (
     <Sider
@@ -77,9 +101,38 @@ export default function Sidebar({ collapsed }: SidebarProps) {
         theme="dark"
         mode="inline"
         selectedKeys={[router.pathname]}
-        items={items}
+        items={MainMenuItems}
         onClick={({ key }) => router.push(key)}
       />
+
+      <div
+        style={{
+          padding: 12,
+          borderTop: "1px solid rgba(255, 255, 255, 0.12)",
+        }}
+      >
+        <Tooltip title={collapsed ? "Keluar" : ""} placement="right">
+          <Button
+            type="text"
+            block
+            onClick={logoutUser}
+            icon={<LogoutOutlined />}
+            style={{
+              height: 44,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: collapsed ? "center" : "flex-start",
+              gap: 10,
+              paddingInline: collapsed ? 0 : 16,
+              color: COFFEE_COLORS.cream,
+              fontWeight: 500,
+              borderRadius: 10,
+            }}
+          >
+            {!collapsed && "Keluar"}
+          </Button>
+        </Tooltip>
+      </div>
     </Sider>
   );
 }

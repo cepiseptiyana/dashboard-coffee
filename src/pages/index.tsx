@@ -1,3 +1,4 @@
+type TrendDirection = "up" | "down" | "flat";
 interface StatSummary {
   id: string;
   title: string;
@@ -40,7 +41,7 @@ interface Product {
 import { Card, Col, Row, message } from "antd";
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import { getToken } from "@/utils/auth.ts";
+import { getToken } from "@/utils/auth";
 import { useRouter } from "next/router";
 
 import DashboardLayout from "@/components/Layout/DashboardLayout";
@@ -61,8 +62,8 @@ import {
 export default function DashboardPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [salesTrend, setSalesTrend] = useState<SalesPoint[]>([]);
   const [stats, setStats] = useState<StatSummary[]>([]);
-  const [sales, setSales] = useState<SalesPoint[]>([]);
   const [categories, setCategories] = useState<ProductCategorySales[]>([]);
   const [traffic, setTraffic] = useState<HourlyTraffic[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
@@ -77,17 +78,38 @@ export default function DashboardPage() {
 
     async function loadDashboard() {
       await Promise.all([
-        getDataStatSummaries(),
         getDataSalesTrend(),
-        getDataCategories(),
-        getDataTraffic(),
-        getDataProducts(),
+        // getDataStatSummaries(),
+        // getDataCategories(),
+        // getDataTraffic(),
+        // getDataProducts(),
       ]);
       setLoading(false);
     }
 
     loadDashboard();
   }, []);
+
+  async function getDataSalesTrend() {
+    try {
+      const token = getToken();
+      if (!token) {
+        return;
+      }
+
+      const result = await getSalesTrend();
+      console.log(result);
+
+      if (!result.success) {
+        message.error(result.message);
+        return;
+      }
+
+      setSalesTrend(result.data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   async function getDataStatSummaries() {
     try {
@@ -98,20 +120,6 @@ export default function DashboardPage() {
         return;
       }
       setStats(result.data);
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  async function getDataSalesTrend() {
-    try {
-      const result = await getSalesTrend();
-
-      if (!result.success) {
-        message.error(result.message);
-        return;
-      }
-      setSales(result.data);
     } catch (err) {
       console.error(err);
     }
@@ -145,19 +153,19 @@ export default function DashboardPage() {
     }
   }
 
-  async function getDataProducts() {
-    try {
-      const result = await getProducts();
+  // async function getDataProducts() {
+  //   try {
+  //     const result = await getProducts();
 
-      if (!result.success) {
-        message.error(result.message);
-        return;
-      }
-      setProducts([...result.data].sort((a, b) => b.sold - a.sold).slice(0, 5));
-    } catch (err) {
-      console.error(err);
-    }
-  }
+  //     if (!result.success) {
+  //       message.error(result.message);
+  //       return;
+  //     }
+  //     setProducts([...result.data].sort((a, b) => b.sold - a.sold).slice(0, 5));
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // }
 
   return (
     <>
@@ -181,7 +189,7 @@ export default function DashboardPage() {
               style={{ borderRadius: 14 }}
               loading={loading}
             >
-              <SalesTrendChart data={sales} />
+              <SalesTrendChart data={salesTrend} />
             </Card>
           </Col>
           <Col xs={24} lg={8}>

@@ -3,6 +3,8 @@ interface LoginValues {
   password: string;
 }
 
+import { ROUTES } from "@/routes/route";
+
 import { useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -28,10 +30,15 @@ export default function LoginPage() {
       };
 
       const result_data = await loginUser(dataInput);
+      console.log(result_data.message);
 
-      // setToken(token);
-      // message.success("Berhasil masuk");
-      // router.push("/");
+      if (!result_data.success) {
+        message.error(result_data.message);
+      }
+
+      setToken(result_data.token);
+      message.success(result_data.message);
+      router.push(ROUTES.HOME);
     } catch (err) {
       message.error(
         err instanceof ApiError ? err.message : "Terjadi kesalahan pada server",

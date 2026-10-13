@@ -1,4 +1,9 @@
-import type { MenuItem } from "@/types";
+interface MenuItem {
+  key: string;
+  icon: string;
+  label: string;
+  children?: MenuItem[];
+}
 
 // Daftar navigasi utama sidebar. Path harus sesuai dengan file di src/pages.
 export const MAIN_MENU: MenuItem[] = [
