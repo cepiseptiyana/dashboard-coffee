@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import DashboardLayout from "@/components/Layout/DashboardLayout";
 import ProductsTable from "@/components/Table/ProductsTable";
 import { getProducts } from "@/services/api";
-import type { Product } from "@/types";
+import { Product } from "@/types";
 
 export default function ProductsPage() {
   const [loading, setLoading] = useState(true);
@@ -24,7 +24,7 @@ export default function ProductsPage() {
     return products.filter(
       (p) =>
         p.name.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q)
+        p.category.toLowerCase().includes(q),
     );
   }, [products, search]);
 

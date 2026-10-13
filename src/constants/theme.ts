@@ -13,6 +13,8 @@ export const COFFEE_COLORS = {
   rust: "#B85C50", // indikator negatif/turun
   ink: "#3A2A20", // teks body di atas krim
   muted: "#8C7A6B", // teks sekunder
+  gray: "rgb(231, 231, 231)",
+  bluePrimary: "#0D6EFD",
 } as const;
 
 export const CHART_PALETTE = [

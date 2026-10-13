@@ -1,5 +1,3 @@
-// Tipe data bersama dipakai lintas komponen, halaman, dan service.
-
 export interface MenuItem {
   key: string;
   icon: string;
