@@ -1,28 +1,65 @@
-import { Card, Col, Row } from "antd";
+interface StatSummary {
+  id: string;
+  title: string;
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  trend: TrendDirection;
+  trendValue: string;
+  description: string;
+}
+
+interface SalesPoint {
+  date: string; // format: "2026-07-01"
+  revenue: number;
+  cupsSold: number;
+}
+
+interface ProductCategorySales {
+  category: string;
+  value: number;
+}
+
+interface HourlyTraffic {
+  hour: string; // "08:00"
+  customers: number;
+}
+
+type ProductStatus = "tersedia" | "stok menipis" | "habis";
+
+interface Product {
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  sold: number;
+  stock: number;
+  status: ProductStatus;
+}
+
+import { Card, Col, Row, message } from "antd";
 import Head from "next/head";
 import { useEffect, useState } from "react";
+import { getToken } from "@/utils/auth.ts";
+import { useRouter } from "next/router";
+
 import DashboardLayout from "@/components/Layout/DashboardLayout";
 import StatCard from "@/components/Cards/StatCard";
 import SalesTrendChart from "@/components/Charts/SalesTrendChart";
 import ProductPieChart from "@/components/Charts/ProductPieChart";
 import HourlyTrafficChart from "@/components/Charts/HourlyTrafficChart";
 import ProductsTable from "@/components/Table/ProductsTable";
+
 import {
-  getHourlyTraffic,
-  getProductCategorySales,
+  getCategories,
   getProducts,
   getSalesTrend,
-  getStatSummaries,
-} from "@/services/api";
-import type {
-  HourlyTraffic,
-  Product,
-  ProductCategorySales,
-  SalesPoint,
-  StatSummary,
-} from "@/types";
+  getSummaries,
+  getTraffic,
+} from "@/services/service";
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<StatSummary[]>([]);
   const [sales, setSales] = useState<SalesPoint[]>([]);
@@ -31,21 +68,96 @@ export default function DashboardPage() {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    Promise.all([
-      getStatSummaries(),
-      getSalesTrend(),
-      getProductCategorySales(),
-      getHourlyTraffic(),
-      getProducts(),
-    ]).then(([s, sale, cat, traf, prod]) => {
-      setStats(s);
-      setSales(sale);
-      setCategories(cat);
-      setTraffic(traf);
-      setProducts([...prod].sort((a, b) => b.sold - a.sold).slice(0, 5));
+    const token = getToken();
+
+    if (!token) {
+      router.replace("/login");
+      return;
+    }
+
+    async function loadDashboard() {
+      await Promise.all([
+        getDataStatSummaries(),
+        getDataSalesTrend(),
+        getDataCategories(),
+        getDataTraffic(),
+        getDataProducts(),
+      ]);
       setLoading(false);
-    });
+    }
+
+    loadDashboard();
   }, []);
+
+  async function getDataStatSummaries() {
+    try {
+      const result = await getSummaries();
+
+      if (!result.success) {
+        message.error(result.message);
+        return;
+      }
+      setStats(result.data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function getDataSalesTrend() {
+    try {
+      const result = await getSalesTrend();
+
+      if (!result.success) {
+        message.error(result.message);
+        return;
+      }
+      setSales(result.data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function getDataCategories() {
+    try {
+      const result = await getCategories();
+
+      if (!result.success) {
+        message.error(result.message);
+        return;
+      }
+      setCategories(result.data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function getDataTraffic() {
+    try {
+      const result = await getTraffic();
+
+      if (!result.success) {
+        message.error(result.message);
+        return;
+      }
+      setTraffic(result.data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function getDataProducts() {
+    try {
+      const result = await getProducts();
+
+      if (!result.success) {
+        message.error(result.message);
+        return;
+      }
+      setProducts([...result.data].sort((a, b) => b.sold - a.sold).slice(0, 5));
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   return (
     <>
