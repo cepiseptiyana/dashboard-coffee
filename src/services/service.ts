@@ -48,6 +48,18 @@ interface Product {
   status: ProductStatus;
 }
 
+type OrderStatus = "selesai" | "diproses" | "dibatalkan";
+type OrderChannel = "dine-in" | "take-away" | "online";
+interface Order {
+  id: string;
+  customer: string;
+  items: string;
+  total: number;
+  channel: OrderChannel;
+  status: OrderStatus;
+  createdAt: string; // ISO datetime
+}
+
 import { api, ApiResponse } from "@/lib/api";
 
 // ==========================================
@@ -102,6 +114,11 @@ export const getTraffic = () =>
 
 export const getProducts = () =>
   api<ApiResponse<Product[]>>("/api/v1/overview/products", {
+    method: "GET",
+  });
+
+export const getOrders = () =>
+  api<ApiResponse<Order[]>>("/api/v1/overview/orders", {
     method: "GET",
   });
 

@@ -1,32 +1,59 @@
-import { Card, Input } from "antd";
+type ProductStatus = "tersedia" | "stok menipis" | "habis";
+interface Product {
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  sold: number;
+  stock: number;
+  status: ProductStatus;
+}
+
+import { Card, Input, message } from "antd";
 import Head from "next/head";
 import { useEffect, useMemo, useState } from "react";
 import DashboardLayout from "@/components/Layout/DashboardLayout";
 import ProductsTable from "@/components/Table/ProductsTable";
-import { getProducts } from "@/services/api";
-import { Product } from "@/types";
+
+import { getProducts } from "@/services/service";
 
 export default function ProductsPage() {
   const [loading, setLoading] = useState(true);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [data, setData] = useState<Product[]>([]);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    getProducts().then((data) => {
-      setProducts(data);
+    async function loadDashboard() {
+      await Promise.all([getDataProducts()]);
       setLoading(false);
-    });
+    }
+    loadDashboard();
   }, []);
 
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return products;
-    return products.filter(
-      (p) =>
-        p.name.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q),
+  async function getDataProducts() {
+    try {
+      const result = await getProducts();
+
+      if (!result.success) {
+        message.error(result.message);
+        return;
+      }
+
+      setData(result.data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  const filter_data = useMemo(() => {
+    const value_search = search.trim().toLowerCase();
+    if (!value_search) return data;
+    return data.filter(
+      (data_product_by) =>
+        data_product_by.name.toLowerCase().includes(value_search) ||
+        data_product_by.category.toLowerCase().includes(value_search),
     );
-  }, [products, search]);
+  }, [data, search]);
 
   return (
     <>
@@ -47,7 +74,7 @@ export default function ProductsPage() {
             />
           }
         >
-          <ProductsTable data={filtered} loading={loading} />
+          <ProductsTable data={filter_data} loading={loading} />
         </Card>
       </DashboardLayout>
     </>

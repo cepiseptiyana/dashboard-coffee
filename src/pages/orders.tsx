@@ -1,32 +1,94 @@
-import { Card, Input } from "antd";
+type OrderStatus = "selesai" | "diproses" | "dibatalkan";
+type OrderChannel = "dine-in" | "take-away" | "online";
+interface Order {
+  id: string;
+  customer: string;
+  items: string;
+  total: number;
+  channel: OrderChannel;
+  status: OrderStatus;
+  createdAt: string; // ISO datetime
+}
+
+import { Card, Input, message } from "antd";
 import Head from "next/head";
 import { useEffect, useMemo, useState } from "react";
 import DashboardLayout from "@/components/Layout/DashboardLayout";
 import OrdersTable from "@/components/Table/OrdersTable";
-import { getOrders } from "@/services/api";
-import type { Order } from "@/types";
+import { getOrders } from "@/services/service";
+// import type { Order } from "@/types";
 
 export default function OrdersPage() {
   const [loading, setLoading] = useState(true);
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [data, setData] = useState<Order[]>([]);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    getOrders().then((data) => {
-      setOrders(data);
+    async function loadDashboard() {
+      await Promise.all([getDataOrders()]);
       setLoading(false);
-    });
+    }
+    loadDashboard();
+
+    // getOrders().then((data) => {
+    //   setOrders(data);
+    //   setLoading(false);
+    // });
   }, []);
 
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return orders;
-    return orders.filter(
-      (o) =>
-        o.id.toLowerCase().includes(q) ||
-        o.customer.toLowerCase().includes(q)
+  async function getDataOrders() {
+    try {
+      const result = await getOrders();
+
+      if (!result.success) {
+        message.error(result.message);
+        return;
+      }
+
+      const result_sanitize_data = sanitizeDataOrders(result.data);
+      setData(result_sanitize_data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function sanitizeDataOrders(getData: any[]) {
+    let newDataOrders: any[] = [];
+
+    for (let getDataForSanitize of getData) {
+      let newDataOrdersItems: any[] = [];
+
+      for (let getDataOrderItems of getDataForSanitize.orderItems) {
+        newDataOrdersItems.push({
+          name: getDataOrderItems.product.name,
+        });
+      }
+
+      newDataOrders.push({
+        id: getDataForSanitize.id,
+        customer: getDataForSanitize.customer,
+        total: getDataForSanitize.total,
+        channel: getDataForSanitize.channel,
+        status: getDataForSanitize.status,
+        createdAt: getDataForSanitize.createdAt,
+        products: newDataOrdersItems,
+      });
+    }
+
+    console.log(newDataOrders);
+
+    return newDataOrders;
+  }
+
+  const filter_data = useMemo(() => {
+    const value_search = search.trim().toLowerCase();
+    if (!value_search) return data;
+    return data.filter(
+      (data_product_by) =>
+        data_product_by.id.toLowerCase().includes(value_search) ||
+        data_product_by.customer.toLowerCase().includes(value_search),
     );
-  }, [orders, search]);
+  }, [data, search]);
 
   return (
     <>
@@ -47,7 +109,7 @@ export default function OrdersPage() {
             />
           }
         >
-          <OrdersTable data={filtered} loading={loading} />
+          <OrdersTable data={filter_data} loading={loading} />
         </Card>
       </DashboardLayout>
     </>

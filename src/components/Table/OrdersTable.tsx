@@ -28,13 +28,31 @@ export default function OrdersTable({
 }: OrdersTableProps) {
   const columns: ColumnsType<Order> = [
     { title: "ID Pesanan", dataIndex: "id", key: "id" },
-    { title: "Pelanggan", dataIndex: "customer", key: "customer" },
-    { title: "Item", dataIndex: "items", key: "items", ellipsis: true },
+    {
+      title: "Pelanggan",
+      dataIndex: "customer",
+      key: "customer",
+      render: (customer) => {
+        if (customer == null) return "Pelanggan Umum";
+
+        return customer.name;
+      },
+    },
+    {
+      title: "Item",
+      dataIndex: "products",
+      key: "products",
+      ellipsis: true,
+      render: (products: any[]) => {
+        return products.map((prod) => prod.name).join(", ");
+      },
+    },
     {
       title: "Total",
       dataIndex: "total",
       key: "total",
       align: "right",
+
       render: (val: number) => formatCurrency(val),
       sorter: (a, b) => a.total - b.total,
     },
@@ -55,7 +73,10 @@ export default function OrdersTable({
       dataIndex: "status",
       key: "status",
       render: (status: OrderStatus) => (
-        <Tag color={STATUS_COLOR[status]} style={{ textTransform: "capitalize" }}>
+        <Tag
+          color={STATUS_COLOR[status]}
+          style={{ textTransform: "capitalize" }}
+        >
           {status}
         </Tag>
       ),
