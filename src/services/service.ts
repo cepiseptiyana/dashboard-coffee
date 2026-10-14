@@ -37,8 +37,18 @@ interface HourlyTraffic {
   customers: number;
 }
 
+type ProductStatus = "tersedia" | "stok menipis" | "habis";
+interface Product {
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  sold: number;
+  stock: number;
+  status: ProductStatus;
+}
+
 import { api, ApiResponse } from "@/lib/api";
-import type { Product } from "@/types";
 
 // ==========================================
 // ===== Auth ===========================
@@ -71,38 +81,43 @@ export const logout = () =>
 // ==========================================
 
 export const getSalesTrend = () =>
-  api<ApiResponse<SalesPoint[]>>("/api/v1/overview/statSummary", {
+  api<ApiResponse<SalesPoint[]>>("/api/v1/overview/sales_trend", {
     method: "GET",
   });
 
 export const getSummaries = () =>
-  api<ApiResponse<StatSummary[]>>("/dashboard/summaries", {
+  api<ApiResponse<StatSummary[]>>("/api/v1/overview/stat_summaries", {
     method: "GET",
   });
 
 export const getCategories = () =>
-  api<ApiResponse<ProductCategorySales[]>>("/dashboard/categories", {
+  api<ApiResponse<ProductCategorySales[]>>("/api/v1/overview/categories", {
     method: "GET",
   });
 
 export const getTraffic = () =>
-  api<ApiResponse<HourlyTraffic[]>>("/dashboard/traffic", {
+  api<ApiResponse<HourlyTraffic[]>>("/api/v1/overview/traffic", {
+    method: "GET",
+  });
+
+export const getProducts = () =>
+  api<ApiResponse<Product[]>>("/api/v1/overview/products", {
     method: "GET",
   });
 
 // ==========================================
 // ===== Products ===========================
 // ==========================================
-export const getProducts = (params?: {
-  page?: number;
-  limit?: number;
-  search?: string;
-  category?: string[];
-}) =>
-  api<Product[]>("/products", {
-    method: "GET",
-    params,
-  });
+// export const getProducts = (params?: {
+//   page?: number;
+//   limit?: number;
+//   search?: string;
+//   category?: string[];
+// }) =>
+//   api<Product[]>("/products", {
+//     method: "GET",
+//     params,
+//   });
 
 export const getProductById = (id: string) =>
   api<Product>(`/products/${id}`, {

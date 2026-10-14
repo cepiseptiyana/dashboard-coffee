@@ -27,7 +27,6 @@ interface HourlyTraffic {
 }
 
 type ProductStatus = "tersedia" | "stok menipis" | "habis";
-
 interface Product {
   id: string;
   name: string;
@@ -36,6 +35,14 @@ interface Product {
   sold: number;
   stock: number;
   status: ProductStatus;
+}
+
+interface DashboardData {
+  statsSummaries: StatSummary[];
+  salesTrend: SalesPoint[];
+  categories: ProductCategorySales[];
+  traffic: HourlyTraffic[];
+  products: Product[];
 }
 
 import { Card, Col, Row, message } from "antd";
@@ -62,11 +69,13 @@ import {
 export default function DashboardPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [salesTrend, setSalesTrend] = useState<SalesPoint[]>([]);
-  const [stats, setStats] = useState<StatSummary[]>([]);
-  const [categories, setCategories] = useState<ProductCategorySales[]>([]);
-  const [traffic, setTraffic] = useState<HourlyTraffic[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [data, setData] = useState<DashboardData>({
+    statsSummaries: [],
+    salesTrend: [],
+    categories: [],
+    traffic: [],
+    products: [],
+  });
 
   useEffect(() => {
     const token = getToken();
@@ -78,17 +87,35 @@ export default function DashboardPage() {
 
     async function loadDashboard() {
       await Promise.all([
+        getDataStatSummaries(),
         getDataSalesTrend(),
-        // getDataStatSummaries(),
-        // getDataCategories(),
-        // getDataTraffic(),
-        // getDataProducts(),
+        getDataCategories(),
+        getDataTraffic(),
+        getDataProducts(),
       ]);
       setLoading(false);
     }
 
     loadDashboard();
   }, []);
+
+  async function getDataStatSummaries() {
+    try {
+      const result = await getSummaries();
+
+      if (!result.success) {
+        message.error(result.message);
+        return;
+      }
+
+      setData((prevData) => ({
+        ...prevData,
+        statsSummaries: result.data,
+      }));
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   async function getDataSalesTrend() {
     try {
@@ -105,21 +132,10 @@ export default function DashboardPage() {
         return;
       }
 
-      setSalesTrend(result.data);
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  async function getDataStatSummaries() {
-    try {
-      const result = await getSummaries();
-
-      if (!result.success) {
-        message.error(result.message);
-        return;
-      }
-      setStats(result.data);
+      setData((prevData) => ({
+        ...prevData,
+        salesTrend: result.data,
+      }));
     } catch (err) {
       console.error(err);
     }
@@ -133,7 +149,11 @@ export default function DashboardPage() {
         message.error(result.message);
         return;
       }
-      setCategories(result.data);
+
+      setData((prevData) => ({
+        ...prevData,
+        categories: result.data,
+      }));
     } catch (err) {
       console.error(err);
     }
@@ -147,25 +167,35 @@ export default function DashboardPage() {
         message.error(result.message);
         return;
       }
-      setTraffic(result.data);
+
+      setData((prevData) => ({
+        ...prevData,
+        traffic: result.data,
+      }));
+
+      // setTraffic(result.data);
     } catch (err) {
       console.error(err);
     }
   }
 
-  // async function getDataProducts() {
-  //   try {
-  //     const result = await getProducts();
+  async function getDataProducts() {
+    try {
+      const result = await getProducts();
 
-  //     if (!result.success) {
-  //       message.error(result.message);
-  //       return;
-  //     }
-  //     setProducts([...result.data].sort((a, b) => b.sold - a.sold).slice(0, 5));
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // }
+      if (!result.success) {
+        message.error(result.message);
+        return;
+      }
+
+      setData((prevData) => ({
+        ...prevData,
+        products: result.data,
+      }));
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   return (
     <>
@@ -174,7 +204,7 @@ export default function DashboardPage() {
       </Head>
       <DashboardLayout title="Ringkasan Toko">
         <Row gutter={[16, 16]}>
-          {stats.map((stat) => (
+          {data.statsSummaries.map((stat) => (
             <Col key={stat.id} xs={24} sm={12} lg={6}>
               <StatCard stat={stat} />
             </Col>
@@ -182,16 +212,30 @@ export default function DashboardPage() {
         </Row>
 
         <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
-          <Col xs={24} lg={16}>
+          <Col xs={24} lg={24}>
             <Card
               title="Tren Penjualan 7 Hari Terakhir"
               variant="borderless"
               style={{ borderRadius: 14 }}
               loading={loading}
             >
-              <SalesTrendChart data={salesTrend} />
+              <SalesTrendChart data={data.salesTrend} />
             </Card>
           </Col>
+        </Row>
+
+        <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+          <Col xs={24} lg={16}>
+            <Card
+              title="Kunjungan Pelanggan per Jam"
+              variant="borderless"
+              style={{ borderRadius: 14 }}
+              loading={loading}
+            >
+              <HourlyTrafficChart data={data.traffic} />
+            </Card>
+          </Col>
+
           <Col xs={24} lg={8}>
             <Card
               title="Penjualan per Kategori"
@@ -199,29 +243,23 @@ export default function DashboardPage() {
               style={{ borderRadius: 14 }}
               loading={loading}
             >
-              <ProductPieChart data={categories} />
+              <ProductPieChart data={data.categories} />
             </Card>
           </Col>
         </Row>
 
         <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
-          <Col xs={24} lg={10}>
-            <Card
-              title="Kunjungan Pelanggan per Jam"
-              variant="borderless"
-              style={{ borderRadius: 14 }}
-              loading={loading}
-            >
-              <HourlyTrafficChart data={traffic} />
-            </Card>
-          </Col>
-          <Col xs={24} lg={14}>
+          <Col xs={24} lg={24}>
             <Card
               title="5 Produk Terlaris"
               variant="borderless"
               style={{ borderRadius: 14 }}
             >
-              <ProductsTable data={products} loading={loading} pageSize={5} />
+              <ProductsTable
+                data={data.products}
+                loading={loading}
+                pageSize={5}
+              />
             </Card>
           </Col>
         </Row>

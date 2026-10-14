@@ -15,17 +15,18 @@ export default function ProductPieChart({ data }: ProductPieChartProps) {
       textStyle: { color: COFFEE_COLORS.cream },
     },
     legend: {
-      orient: "vertical",
+      orient: "horizontal",
       right: 4,
-      top: "middle",
+      bottom: 0,
+      // top: "middle",
       textStyle: { color: COFFEE_COLORS.ink, fontSize: 12 },
     },
     series: [
       {
         name: "Kategori Produk",
         type: "pie",
-        radius: ["45%", "72%"],
-        center: ["38%", "50%"],
+        radius: ["39%", "72%"],
+        center: ["50%", "40%"],
         avoidLabelOverlap: true,
         itemStyle: {
           borderRadius: 6,
@@ -38,5 +39,5 @@ export default function ProductPieChart({ data }: ProductPieChartProps) {
     ],
   };
 
-  return <ReactECharts option={option} style={{ height: 320 }} />;
+  return <ReactECharts option={option} style={{ height: 300 }} />;
 }

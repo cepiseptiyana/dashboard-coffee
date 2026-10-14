@@ -35,9 +35,14 @@ export default function HourlyTrafficChart({ data }: HourlyTrafficChartProps) {
           color: COFFEE_COLORS.crema,
           borderRadius: [6, 6, 0, 0],
         },
+        emphasis: {
+          itemStyle: {
+            color: COFFEE_COLORS.espresso,
+          },
+        },
       },
     ],
   };
 
-  return <ReactECharts option={option} style={{ height: 280 }} />;
+  return <ReactECharts option={option} style={{ height: 300 }} />;
 }
