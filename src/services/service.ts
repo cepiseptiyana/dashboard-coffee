@@ -60,6 +60,16 @@ interface Order {
   createdAt: string; // ISO datetime
 }
 
+interface Customer {
+  id: string;
+  name: string;
+  email: string;
+  totalOrders: number;
+  totalSpent: number;
+  memberSince: string;
+  tier: "Reguler" | "Silver" | "Gold";
+}
+
 import { api, ApiResponse } from "@/lib/api";
 
 // ==========================================
@@ -119,6 +129,11 @@ export const getProducts = () =>
 
 export const getOrders = () =>
   api<ApiResponse<Order[]>>("/api/v1/overview/orders", {
+    method: "GET",
+  });
+
+export const getCustomers = () =>
+  api<ApiResponse<Customer[]>>("/api/v1/overview/customers", {
     method: "GET",
   });
 

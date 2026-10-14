@@ -29,11 +29,6 @@ export default function OrdersPage() {
       setLoading(false);
     }
     loadDashboard();
-
-    // getOrders().then((data) => {
-    //   setOrders(data);
-    //   setLoading(false);
-    // });
   }, []);
 
   async function getDataOrders() {
@@ -84,9 +79,9 @@ export default function OrdersPage() {
     const value_search = search.trim().toLowerCase();
     if (!value_search) return data;
     return data.filter(
-      (data_product_by) =>
-        data_product_by.id.toLowerCase().includes(value_search) ||
-        data_product_by.customer.toLowerCase().includes(value_search),
+      (data_order_by) =>
+        data_order_by.id.toLowerCase().includes(value_search) ||
+        data_order_by.customer.toLowerCase().includes(value_search),
     );
   }, [data, search]);
 
