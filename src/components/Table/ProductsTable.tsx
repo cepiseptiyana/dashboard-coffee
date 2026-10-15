@@ -51,17 +51,26 @@ export default function ProductsTable({
       title: "Status",
       dataIndex: "status",
       key: "status",
+      align: "center",
       render: (status: ProductStatus) => (
-        <Tag color={STATUS_COLOR[status]} style={{ textTransform: "capitalize" }}>
+        <Tag
+          style={{
+            width: 120,
+            height: 32,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            textTransform: "capitalize",
+            fontWeight: 600,
+            margin: "auto",
+          }}
+          key={status}
+          color={STATUS_COLOR[status]}
+          variant={"solid"}
+        >
           {status}
         </Tag>
       ),
-      filters: [
-        { text: "Tersedia", value: "tersedia" },
-        { text: "Stok Menipis", value: "stok menipis" },
-        { text: "Habis", value: "habis" },
-      ],
-      onFilter: (value, record) => record.status === value,
     },
   ];
 

@@ -12,6 +12,12 @@ export default function HourlyTrafficChart({ data }: HourlyTrafficChartProps) {
       trigger: "axis",
       backgroundColor: COFFEE_COLORS.espresso,
       textStyle: { color: COFFEE_COLORS.cream },
+      formatter: function (params: any) {
+        const hour = params[0].name;
+        const customers = params[0].value;
+
+        return `<b>Jam: ${hour}</b><br/>Pelanggan: ${customers}`;
+      },
     },
     grid: { left: 40, right: 20, top: 20, bottom: 30 },
     xAxis: {

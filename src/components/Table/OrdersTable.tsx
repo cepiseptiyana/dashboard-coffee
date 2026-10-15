@@ -52,7 +52,6 @@ export default function OrdersTable({
       dataIndex: "total",
       key: "total",
       align: "right",
-
       render: (val: number) => formatCurrency(val),
       sorter: (a, b) => a.total - b.total,
     },
@@ -68,14 +67,34 @@ export default function OrdersTable({
       ],
       onFilter: (value, record) => record.channel === value,
     },
+
+    {
+      title: "Waktu",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (val: string) => formatDateTime(val),
+      sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
+    },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      align: "center",
       render: (status: OrderStatus) => (
         <Tag
+          style={{
+            width: 120,
+            height: 32,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            textTransform: "capitalize",
+            fontWeight: 600,
+            margin: "auto",
+          }}
+          key={status}
           color={STATUS_COLOR[status]}
-          style={{ textTransform: "capitalize" }}
+          variant={"solid"}
         >
           {status}
         </Tag>
@@ -86,13 +105,6 @@ export default function OrdersTable({
         { text: "Dibatalkan", value: "dibatalkan" },
       ],
       onFilter: (value, record) => record.status === value,
-    },
-    {
-      title: "Waktu",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      render: (val: string) => formatDateTime(val),
-      sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
     },
   ];
 

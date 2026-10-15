@@ -44,8 +44,27 @@ export default function CustomersTable({
       title: "Tier",
       dataIndex: "tier",
       key: "tier",
+      align: "center",
       render: (tier: Customer["tier"]) => (
-        <Tag color={TIER_COLOR[tier]}>{tier}</Tag>
+        <Tag
+          style={{
+            width: 120,
+            height: 32,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            textTransform: "capitalize",
+            fontWeight: 600,
+            margin: "auto",
+          }}
+          key={tier}
+          color={TIER_COLOR[tier]}
+          variant={"solid"}
+        >
+          {tier}
+        </Tag>
+
+        // <Tag color={TIER_COLOR[tier]}>{tier}</Tag>
       ),
       filters: [
         { text: "Gold", value: "Gold" },

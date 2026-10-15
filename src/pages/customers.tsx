@@ -28,11 +28,6 @@ export default function CustomersPage() {
       setLoading(false);
     }
     loadDashboard();
-
-    // getCustomers().then((data) => {
-    //   setCustomers(data);
-    //   setLoading(false);
-    // });
   }, []);
 
   async function getDataCustomers() {
@@ -45,7 +40,6 @@ export default function CustomersPage() {
       }
 
       const result_sanitize_data = sanitizeDataCustomers(result.data);
-      // setData(result.data);
       setData(result_sanitize_data);
     } catch (err) {
       console.error(err);
