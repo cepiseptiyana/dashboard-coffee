@@ -3,8 +3,12 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from "@ant-design/icons";
-import { Avatar, Badge, Layout, Space, Typography } from "antd";
+import { Avatar, Badge, Layout, Space, Typography, message } from "antd";
 import { COFFEE_COLORS } from "@/constants/theme";
+import { useEffect, useState } from "react";
+
+import Notification from "@/components/Notification/Notification";
+import { getDataUser } from "@/services/service";
 
 const { Header: AntHeader } = Layout;
 const { Text } = Typography;
@@ -16,6 +20,29 @@ interface HeaderProps {
 }
 
 export default function Header({ collapsed, onToggle, title }: HeaderProps) {
+  const [data, setData] = useState<any>([]);
+
+  useEffect(() => {
+    async function loadDashboard() {
+      await Promise.all([getDataApiUser()]);
+    }
+    loadDashboard();
+  }, []);
+
+  async function getDataApiUser() {
+    try {
+      const result = await getDataUser();
+
+      if (!result.success) {
+        message.error(result.message);
+        return;
+      }
+
+      console.log("result DATA : ", result.data);
+      setData(result.data);
+    } catch (err) {}
+  }
+
   return (
     <AntHeader
       style={{
@@ -48,14 +75,12 @@ export default function Header({ collapsed, onToggle, title }: HeaderProps) {
         </Text>
       </Space>
       <Space size={20}>
-        <Badge count={3} size="small">
-          <BellOutlined style={{ fontSize: 18, color: COFFEE_COLORS.ink }} />
-        </Badge>
+        <Notification />
         <Space size={8}>
           <Avatar style={{ backgroundColor: COFFEE_COLORS.crema }}>AB</Avatar>
           <div style={{ lineHeight: 1.2 }}>
             <Text strong style={{ display: "block", fontSize: 13 }}>
-              Andi Barista
+              {data?.name}
             </Text>
             <Text type="secondary" style={{ fontSize: 12 }}>
               Store Manager

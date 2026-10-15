@@ -1,9 +1,3 @@
-interface ResultRegisterValues {
-  name: string;
-  email: string;
-  password: string;
-}
-
 interface RegisterValues {
   name: string;
   email: string;
@@ -19,11 +13,11 @@ import AuthLayout from "@/components/Auth/AuthLayout";
 import RegisterCard from "@/components/Cards/RegisterCard";
 import { ApiError } from "@/lib/api";
 import { registerUser } from "@/services/service";
-import { setToken } from "@/utils/auth";
+
+import { ROUTES } from "@/routes/route";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [dataUser, setDataUser] = useState<ResultRegisterValues>();
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async (values: RegisterValues) => {
@@ -45,7 +39,7 @@ export default function RegisterPage() {
       }
 
       message.success(result_data.message);
-      router.push("/login");
+      router.push(ROUTES.LOGIN);
     } catch (err) {
       message.error(
         err instanceof ApiError ? err.message : "Terjadi kesalahan pada server",
