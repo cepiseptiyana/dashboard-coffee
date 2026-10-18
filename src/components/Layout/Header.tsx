@@ -1,9 +1,5 @@
-import {
-  BellOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-} from "@ant-design/icons";
-import { Avatar, Badge, Layout, Space, Typography, message } from "antd";
+import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+import { Avatar, Layout, Space, Typography, message } from "antd";
 import { COFFEE_COLORS } from "@/constants/theme";
 import { useEffect, useState } from "react";
 

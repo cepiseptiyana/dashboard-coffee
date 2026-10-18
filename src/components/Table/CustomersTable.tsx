@@ -1,6 +1,21 @@
+interface Customer {
+  id: string;
+  name: string;
+  email: string;
+  totalOrders: number;
+  totalSpent: number;
+  memberSince: string;
+  tier: "Reguler" | "Silver" | "Gold";
+}
+
+interface CustomersTableProps {
+  data: Customer[];
+  loading?: boolean;
+  pageSize?: number;
+}
+
 import { Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import type { Customer } from "@/types";
 import { formatCurrency, formatNumber } from "@/utils/formatters";
 
 const TIER_COLOR: Record<Customer["tier"], string> = {
@@ -8,12 +23,6 @@ const TIER_COLOR: Record<Customer["tier"], string> = {
   Silver: "default",
   Reguler: "blue",
 };
-
-interface CustomersTableProps {
-  data: Customer[];
-  loading?: boolean;
-  pageSize?: number;
-}
 
 export default function CustomersTable({
   data,

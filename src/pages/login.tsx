@@ -30,7 +30,6 @@ export default function LoginPage() {
       };
 
       const result_data = await loginUser(dataInput);
-      console.log(result_data.message);
 
       if (!result_data.success) {
         message.error(result_data.message);

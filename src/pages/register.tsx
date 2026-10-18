@@ -23,9 +23,6 @@ export default function RegisterPage() {
   const handleRegister = async (values: RegisterValues) => {
     setLoading(true);
     try {
-      // confirmPassword hanya untuk validasi form, tidak dikirim ke backend
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-
       const dataInput = {
         name: values.name,
         email: values.email,

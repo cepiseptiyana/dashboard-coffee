@@ -9,6 +9,12 @@ interface Register {
   created_at: string;
 }
 
+interface GetProfile {
+  id: string;
+  name: string;
+  email: string;
+}
+
 type TrendDirection = "up" | "down" | "flat";
 interface StatSummary {
   id: string;
@@ -95,7 +101,12 @@ export const registerUser = (body: Record<string, unknown>) => {
 };
 
 export const getProfile = () =>
-  api<{ id: string; name: string; email: string }>("/auth/me", {
+  api<ApiResponse<GetProfile>>("/auth/me", {
+    method: "GET",
+  });
+
+export const getDataUser = () =>
+  api<ApiResponse<User[]>>("/api/v1/auth/getUser", {
     method: "GET",
   });
 
@@ -140,11 +151,6 @@ export const getOrders = () =>
 
 export const getCustomers = () =>
   api<ApiResponse<Customer[]>>("/api/v1/overview/customers", {
-    method: "GET",
-  });
-
-export const getDataUser = () =>
-  api<ApiResponse<User[]>>("/api/v1/auth/getUser", {
     method: "GET",
   });
 

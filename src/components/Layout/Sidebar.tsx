@@ -45,12 +45,8 @@ export default function Sidebar({ collapsed }: SidebarProps) {
       okText: "Ya",
       cancelText: "Batal",
       onOk() {
-        console.log("User klik Ya");
         removeToken();
         router.push(ROUTES.LOGIN);
-      },
-      onCancel() {
-        console.log("User klik Batal");
       },
     });
   }

@@ -1,6 +1,17 @@
+type OrderStatus = "selesai" | "diproses" | "dibatalkan";
+type OrderChannel = "dine-in" | "take-away" | "online";
+interface Order {
+  id: string;
+  customer: string;
+  items: string;
+  total: number;
+  channel: OrderChannel;
+  status: OrderStatus;
+  createdAt: string; // ISO datetime
+}
+
 import { Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import type { Order, OrderChannel, OrderStatus } from "@/types";
 import { formatCurrency, formatDateTime } from "@/utils/formatters";
 
 const STATUS_COLOR: Record<OrderStatus, string> = {

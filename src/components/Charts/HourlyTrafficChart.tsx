@@ -1,10 +1,14 @@
-import ReactECharts from "echarts-for-react";
-import { COFFEE_COLORS } from "@/constants/theme";
-import type { HourlyTraffic } from "@/types";
+interface HourlyTraffic {
+  hour: string; // "08:00"
+  customers: number;
+}
 
 interface HourlyTrafficChartProps {
   data: HourlyTraffic[];
 }
+
+import ReactECharts from "echarts-for-react";
+import { COFFEE_COLORS } from "@/constants/theme";
 
 export default function HourlyTrafficChart({ data }: HourlyTrafficChartProps) {
   const option = {

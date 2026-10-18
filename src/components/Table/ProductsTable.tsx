@@ -1,7 +1,17 @@
+type ProductStatus = "tersedia" | "stok menipis" | "habis";
+interface Product {
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  sold: number;
+  stock: number;
+  status: ProductStatus;
+}
+
 import { Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { COFFEE_COLORS } from "@/constants/theme";
-import type { Product, ProductStatus } from "@/types";
 import { formatCurrency, formatNumber } from "@/utils/formatters";
 
 const STATUS_COLOR: Record<ProductStatus, string> = {
