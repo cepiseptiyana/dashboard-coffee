@@ -4,7 +4,7 @@ import { COFFEE_COLORS } from "@/constants/theme";
 import { useEffect, useState } from "react";
 
 import Notification from "@/components/Notification/Notification";
-import { getDataUser } from "@/services/service";
+import { getDataUser } from "@/services/api";
 
 const { Header: AntHeader } = Layout;
 const { Text } = Typography;

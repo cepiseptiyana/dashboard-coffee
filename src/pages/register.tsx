@@ -12,7 +12,7 @@ import { message } from "antd";
 import AuthLayout from "@/components/Auth/AuthLayout";
 import RegisterCard from "@/components/Cards/RegisterCard";
 import { ApiError } from "@/lib/api";
-import { registerUser } from "@/services/service";
+import { registerUser } from "@/services/api";
 
 import { ROUTES } from "@/routes/route";
 

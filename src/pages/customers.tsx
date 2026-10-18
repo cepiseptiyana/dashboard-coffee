@@ -14,7 +14,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import DashboardLayout from "@/components/Layout/DashboardLayout";
 import CustomersTable from "@/components/Table/CustomersTable";
-import { getCustomers } from "@/services/service";
+import { getCustomers } from "@/services/api";
 import { formatDateTime } from "@/utils/formatters";
 
 export default function CustomersPage() {

@@ -15,7 +15,7 @@ import { useEffect, useMemo, useState } from "react";
 import DashboardLayout from "@/components/Layout/DashboardLayout";
 import ProductsTable from "@/components/Table/ProductsTable";
 
-import { getProducts } from "@/services/service";
+import { getProducts } from "@/services/api";
 
 export default function ProductsPage() {
   const [loading, setLoading] = useState(true);

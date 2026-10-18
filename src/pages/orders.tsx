@@ -15,7 +15,7 @@ import Head from "next/head";
 import { useEffect, useMemo, useState } from "react";
 import DashboardLayout from "@/components/Layout/DashboardLayout";
 import OrdersTable from "@/components/Table/OrdersTable";
-import { getOrders } from "@/services/service";
+import { getOrders } from "@/services/api";
 // import type { Order } from "@/types";
 
 export default function OrdersPage() {

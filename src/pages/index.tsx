@@ -64,7 +64,7 @@ import {
   getSalesTrend,
   getSummaries,
   getTraffic,
-} from "@/services/service";
+} from "@/services/api";
 
 export default function DashboardPage() {
   const router = useRouter();

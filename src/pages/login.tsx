@@ -14,7 +14,7 @@ import AuthLayout from "@/components/Auth/AuthLayout";
 import LoginCard from "@/components/Cards/LoginCard";
 
 import { ApiError } from "@/lib/api";
-import { loginUser } from "@/services/service";
+import { loginUser } from "@/services/api";
 import { setToken } from "@/utils/auth";
 
 export default function LoginPage() {
